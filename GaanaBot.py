@@ -139,7 +139,8 @@ def downloadSong(url, title):
 path = '/home/mayank/Desktop/TelegramBot'
 
 #Telegram bot token ID
-TOKEN = '203778510:AAH-GC5s9KVwLhnhOqgwlUIDpLpDo7zt_ko'
+TOKEN = '#############################################'
+
 
 #Base url for fetching json object 
 BASE_URL = 'http://www.youtubeinmp3.com/fetch/?format=JSON&video='
