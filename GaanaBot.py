@@ -18,6 +18,10 @@ def handle(msg):
     print 'Username: ' + username
     print 'Got message: %s' % command
 
+    if command == '/start':
+        bot.sendMessage(chat_id, WELCOME_MSG)
+        return 
+    
     bot.sendMessage(chat_id, username + ', your song is on its way..')
 
     #Searching YouTube with text which has been received
@@ -149,6 +153,7 @@ BASE_URL = 'http://www.youtubeinmp3.com/fetch/?format=JSON&video='
 SUCCESS = 'Success'
 FAIL = 'Fail'
 ERROR = 'Error in pushing song.'
+WELCOME_MSG = 'To start using GaanaBot send the name of the song you want to download.'
 
 bot = telepot.Bot(TOKEN)
 bot.getMe()
