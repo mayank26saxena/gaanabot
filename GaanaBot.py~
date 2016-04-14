@@ -239,7 +239,6 @@ def checkFileSize(upload_file_path):
 #Download path for music file
 path = '/home/mayank/Desktop/TelegramBot/Songs/'
 
-#Paths for database files
 database_path = '/home/mayank/Desktop/TelegramBot/Database/'
 userdata_file_path = database_path + 'userdata.json'
 songdata_file_path = database_path + 'songdata.json'
