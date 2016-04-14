@@ -7,7 +7,7 @@ To find lyrics, send a message in the format - **_Lyrics \<song\_name\> - \<arti
 It has always been really hard to download music for free. The process is long and cumbersome and doesn't guarantee whether the correct song will be downloaded at the end or not. I decided to fix this problem by developing **GaanaBot**.
 
 # How to Use 
-- Download Telegram Android/iOS app. 
+- Download Telegram app for Android/iOS platform. 
 - Search for GaanaBot. 
 - Send name of song to download song.
 - To find lyrics send a message in the formatin - **_Lyrics \<song\_name\> - \<artist\_name\>_**  
