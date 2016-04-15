@@ -192,13 +192,15 @@ def sendsong(msg):
 
 def savesongdata(songdata):
     msg  = json.dumps(songdata)
-    with open(songdata_file_path, 'w') as f:
+    with open(songdata_file_path, 'a') as f:
         json.dump(msg, f)
+        f.write(os.linesep)
 
 def saveuserdata(userdata):
     msg  = json.dumps(userdata)
-    with open(userdata_file_path, 'w') as f:
+    with open(userdata_file_path, 'a') as f:
         json.dump(msg, f)
+        f.write(os.linesep)
         
 def sendmessage(title, message):
     pynotify.init("Test")
@@ -239,13 +241,12 @@ def checkFileSize(upload_file_path):
 #Download path for music file
 path = '/home/mayank/Desktop/TelegramBot/Songs/'
 
-#Paths for database files
 database_path = '/home/mayank/Desktop/TelegramBot/Database/'
 userdata_file_path = database_path + 'userdata.json'
 songdata_file_path = database_path + 'songdata.json'
 
 #Telegram bot token ID
-TOKEN = '###################################################'
+TOKEN = '################################################'
 
 #Base url for fetching json object 
 BASE_URL = 'http://www.youtubeinmp3.com/fetch/?format=JSON&video='

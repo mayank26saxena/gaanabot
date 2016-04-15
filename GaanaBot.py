@@ -11,6 +11,34 @@ from datetime import datetime
 import re
 from slugify import slugify
 
+#Download path for music file
+path = '/home/mayank/Desktop/TelegramBot/Songs/'
+
+database_path = '/home/mayank/Desktop/TelegramBot/Database/'
+userdata_file_path = database_path + 'userdata.json'
+songdata_file_path = database_path + 'songdata.json'
+searchdata_file_path = database_path + 'searchdata.json'
+
+#Telegram bot token ID
+TOKEN = '#############################################'
+
+#Base url for fetching json object 
+BASE_URL = 'http://www.youtubeinmp3.com/fetch/?format=JSON&video='
+
+#Keywords
+SUCCESS = 'Success'
+FAIL = 'Fail'
+ERROR = 'Error in pushing song.'
+WELCOME_MSG = 'To start using GaanaBot send the name of the song you want to download. To get lyrics send a message in the format \'Lyrics <song_name> - <artist_name>\''
+ONE_MB = 1000000
+SONG_SENT_MESSAGE = 'Download is complete. Song is being sent to you. Please wait. To save the song click on it and choose Save to Music option.'
+
+
+BASE_LYRICS_URL = 'http://lyric-api.herokuapp.com/api/find/'
+SLASH = '/'
+LYRICS_ERROR_MSG = 'Lyrics not found. Message should be in the following format : Lyrics <song_name> - <artist_name>'
+LYRICS_WAITING_MSG = 'Looking up lyrics for the song you requested. Please wait.'
+
     
 def handle(msg):
     #Get chat_id and text from message which has been received
@@ -19,30 +47,36 @@ def handle(msg):
     chat_id = msg['from']['id']
     command = msg['text']
 
-    userdata = {'userid': msg['from']['id'],
-                'username': msg['from'],
-                'searchterm': msg['text'],
-                'date' :  msg['date']
-                }
-    
-    saveuserdata(userdata)
 
     print ('Username: ' + username)
     print ('Got message: %s' % command)
 
     if command == '/start':
         bot.sendMessage(chat_id, WELCOME_MSG)
+        userdata = {'userid': msg['from']['id'],
+                    'username': msg['from'],
+        }
+        savedata(userdata,userdata_file_path)
         return
 
     first_word = command.split(' ', 1)[0]
     print 'first word is : ' + first_word
     lower_first_word = first_word.lower()
 
+
+    getlyrics = False
     if lower_first_word == 'lyrics' :
+      getlyrics = True
       sendlyrics(msg)
     else:
       sendsong(msg)
-      
+    searchdata = {'userid': msg['from']['id'],
+                  'username': msg['from'],
+                  'searchterm': msg['text'],
+                  'date' :  msg['date'],
+                  'lyrics' : getlyrics
+    }
+    savedata(searchdata,searchdata_file_path)
 
 def sendlyrics(msg):
         username = msg['from']['first_name']
@@ -181,7 +215,7 @@ def sendsong(msg):
                         'searchresult': title.lower(),
                         'date' :  msg['date']
                        }
-            savesongdata(songdata)
+            savedata(songdata,songdata_file_path)
             
         except ValueError:
             print ('No song found')
@@ -190,18 +224,12 @@ def sendsong(msg):
 
         break
 
-def savesongdata(songdata):
-    msg  = json.dumps(songdata)
-    with open(songdata_file_path, 'a') as f:
+def savedata(data, filename):
+    msg  = json.dumps(data)
+    with open(filename, 'a') as f:
         json.dump(msg, f)
         f.write(os.linesep)
 
-def saveuserdata(userdata):
-    msg  = json.dumps(userdata)
-    with open(userdata_file_path, 'a') as f:
-        json.dump(msg, f)
-        f.write(os.linesep)
-        
 def sendmessage(title, message):
     pynotify.init("Test")
     notice = pynotify.Notification(title, message)
@@ -238,32 +266,6 @@ def checkFileSize(upload_file_path):
     return b
     
 
-#Download path for music file
-path = '/home/mayank/Desktop/TelegramBot/Songs/'
-
-database_path = '/home/mayank/Desktop/TelegramBot/Database/'
-userdata_file_path = database_path + 'userdata.json'
-songdata_file_path = database_path + 'songdata.json'
-
-#Telegram bot token ID
-TOKEN = '################################################'
-
-#Base url for fetching json object 
-BASE_URL = 'http://www.youtubeinmp3.com/fetch/?format=JSON&video='
-
-#Keywords
-SUCCESS = 'Success'
-FAIL = 'Fail'
-ERROR = 'Error in pushing song.'
-WELCOME_MSG = 'To start using GaanaBot send the name of the song you want to download. To get lyrics send a message in the format \'Lyrics <song_name> - <artist_name>\''
-ONE_MB = 1000000
-SONG_SENT_MESSAGE = 'Download is complete. Song is being sent to you. Please wait. To save the song click on it and choose Save to Music option.'
-
-
-BASE_LYRICS_URL = 'http://lyric-api.herokuapp.com/api/find/'
-SLASH = '/'
-LYRICS_ERROR_MSG = 'Lyrics not found. Message should be in the following format : Lyrics <song_name> - <artist_name>'
-LYRICS_WAITING_MSG = 'Looking up lyrics for the song you requested. Please wait.'
 
 bot = telepot.Bot(TOKEN)
 bot.getMe()
