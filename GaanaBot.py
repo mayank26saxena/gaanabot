@@ -138,7 +138,7 @@ def sendsong(msg):
 
   #Reading response and finding top result
   html = response.read()
-  soup = BeautifulSoup(html)
+  soup = BeautifulSoup(html, "lxml")
 
   for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
         #Getting Video Url from first link in search results
