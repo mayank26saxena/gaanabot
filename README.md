@@ -15,7 +15,8 @@ It has always been really hard to download music for free. The process is long a
 That's it. It is that simple!
 
 # Screenshots
-![alt tag](https://github.com/mayank26saxena/GaanaBot/blob/master/screenshots/screenshot5.png)
+![alt tag](https://github.com/mayank26saxena/GaanaBot/blob/master/screenshots/screenshot4.jpg)
 ![alt tag](https://github.com/mayank26saxena/GaanaBot/blob/master/screenshots/screenshot2.jpg)
-![alt tag](https://github.com/mayank26saxena/GaanaBot/blob/master/screenshots/screenshot6.png)
+![alt tag](https://github.com/mayank26saxena/GaanaBot/blob/master/screenshots/screenshot6.jpg)
 ![alt tag](https://github.com/mayank26saxena/GaanaBot/blob/master/screenshots/screenshot7.jpg)
+
