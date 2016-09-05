@@ -6,11 +6,12 @@ import webbrowser
 import json
 import time
 import os
-import pynotify 
+import pynotify
 from datetime import datetime
 import re
 from slugify import slugify
 import codecs
+import wget
 
 #Download path for music file
 path = '/home/mayank/Desktop/TelegramBot/Songs/'
@@ -23,7 +24,7 @@ searchdata_file_path = database_path + 'searchdata.json'
 #Telegram bot token ID
 TOKEN = '###############################################'
 
-#Base url for fetching json object 
+#Base url for fetching json object
 BASE_URL = 'http://www.youtubeinmp3.com/fetch/?format=JSON&video='
 
 #Keywords
@@ -39,7 +40,7 @@ SLASH = '/'
 LYRICS_ERROR_MSG = 'Lyrics not found. Message should be in the following format : Lyrics <song_name> - <artist_name>'
 LYRICS_WAITING_MSG = 'Looking up lyrics for the song you requested. Please wait.'
 
-  
+
 def handle(msg):
   #Get chat_id and text from message which has been received
   print 'Message received:', msg
@@ -87,7 +88,7 @@ def sendlyrics(msg):
     bot.sendMessage(chat_id, LYRICS_WAITING_MSG)
 
     first_word = command.split(' ', 1)[0]
-    s = command.split(first_word + ' ', 1)[1]  
+    s = command.split(first_word + ' ', 1)[1]
     p = s.index('-')
     song_name = s[:p]
     song_name = song_name.lower()
@@ -104,7 +105,7 @@ def sendlyrics(msg):
          print artist_name
 
     artist_name = artist_name.replace(' ', '%20')
-    song_name = song_name.replace(' ', '%20') 
+    song_name = song_name.replace(' ', '%20')
 
     print artist_name
     print song_name
@@ -131,7 +132,7 @@ def sendsong(msg):
   bot.sendMessage(chat_id, username + ', your song is on its way..')
 
   #Searching YouTube with text which has been received
-  
+
   query = urllib.quote(command)
   url = "https://www.youtube.com/results?search_query=" + query
   response = urllib2.urlopen(url)
@@ -142,7 +143,7 @@ def sendsong(msg):
 
   for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
         #Getting Video Url from first link in search results
-        VIDEO_URL = 'https://www.youtube.com' + vid['href'] 
+        VIDEO_URL = 'https://www.youtube.com' + vid['href']
         print ('Video URL : ' + VIDEO_URL)
 
         #bot.sendMessage(chat_id, VIDEO_URL)
@@ -158,8 +159,8 @@ def sendsong(msg):
 
         try:
              data = json.loads(response.read()) #Json object
-             print (data)  
-  
+             print (data)
+
              #Getting length, download url and title of song from json object
              if 'length' not in data:
                 raise ValueError("No length in given data")
@@ -173,8 +174,8 @@ def sendsong(msg):
                 raise ValueError("No title in given data")
                 print ('No title in given data')
                 break
- 
-             length = data['length'] 
+
+             length = data['length']
              print ('Length : ' + str(length))
              DOWNLOAD_URL = data['link']
              print ('DOWNLOAD_URL : ' + DOWNLOAD_URL)
@@ -184,7 +185,7 @@ def sendsong(msg):
              title =  slugify(title)
              upload_file = path + title.lower() + '.mp3'
              print ('upload_file name : ' + upload_file)
-  
+
              if not (os.path.exists(upload_file)) :
                 bot.sendMessage(chat_id, 'Download for your song has started..')
                 print ('File does not exist: downloading')
@@ -199,16 +200,16 @@ def sendsong(msg):
                     print ('Download is complete.')
              else:
                     print ('File exists: no need to download')
-  
-             print ('Uploading song') 
+
+             print ('Uploading song')
              print ('Start time - ' + str(datetime.now()))
- 
+
              #Opening latest file in downloads folder and sending file as message
              audio = open(upload_file , 'rb')
              bot.sendAudio(chat_id, audio, length , '', title)
- 
+
              print ('Successful')
-             print ('End time - ' + str(datetime.now())) 
+             print ('End time - ' + str(datetime.now()))
              sendmessage(SUCCESS, title + ' was pushed successfully to ' + username + '.')
              songdata = {'searchterm': command,
                          'searchresult': title.lower(),
@@ -216,14 +217,14 @@ def sendsong(msg):
              }
              savedata(songdata,songdata_file_path)
              break
- 
+
         except ValueError:
              print ('No song found')
              bot.sendMessage(chat_id, 'No song found. Please try again with a different keyword.')
              sendmessage(FAIL, ERROR)
              break
 
-  return 
+  return
 
 def savedata(data, filename):
   msg  = json.dumps(data)
@@ -238,34 +239,13 @@ def sendmessage(title, message):
   return
 
 def downloadSong(url, title):
-  usock = urllib2.urlopen(url)
-  print ('info: ', usock.info())
-  f = open(title, 'wb')
-  try :
-     file_size = int(usock.info().getheaders("Content-Length")[0])
-     print ('Downloading : %s Bytes: %s' % (title, file_size))
-  except IndexError:
-     print ('Unknown file size: index error')
-
-  downloaded = 0
-  block_size = 8192
-  while True:
-    buff = usock.read(block_size)
-    if not buff:
-        break
-
-    downloaded = downloaded + len(buff)
-    f.write(buff)
-    #download_status = r"%3.2f%%" % (downloaded * 100.00 / file_size)
-    #download_status = download_status + (len(download_status)+1) * chr(8)
-    #print download_status,"done"
-
-  f.close()
+    downloaded = wget.download(url, title)
+    print "Downloaded: " + downloaded
 
 def checkFileSize(upload_file_path):
   b = os.path.getsize(upload_file_path)
   return b
-  
+
 
 
 bot = telepot.Bot(TOKEN)
